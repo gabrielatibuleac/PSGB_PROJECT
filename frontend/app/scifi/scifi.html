@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categorie - Movie App</title>
+    <!-- Folosim stilul de la drama care este identic cu demo -->
+    <link rel="stylesheet" href="../demo/demo.css"> <!-- Iese din romance, intra in demo -->
+<script src="../demo/demo.js" defer></script>
+    <script src="../drama/drama.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR (Identic cu Demo) -->
+        <aside class="sidebar">
+            <a href="../demo/demo.html" class="logo">MOVIE</a>
+            <nav class="menu">
+                <a href="../demo/demo.html" class="menu-item">Home</a>
+                <div class="menu-item categories-header active" id="categories-toggle">
+                    Categories <img src="../../public/sageata.png" class="icon-sageata">
+                </div>
+                <ul class="submenu show">
+                      <li><a href="../drama/drama.html">Drama</a></li>
+                    <li><a href="../thriller/thriller.html">Thriller</a></li>
+                    <li><a href="../romance/romance.html">Romance</a></li>
+                    <li><a href="../comedy/comedy.html">Comedy</a></li>
+                    <li><a href="../action/action.html">Action</a></li>
+                    <li><a href="../anime/anime.html">Anime</a></li>
+                    <li><a href="../fantasy/fantasy.html">Fantasy</a></li>
+                    <li><a href="../scifi/scifi.html">Sci-Fi</a></li>
+                    <li><a href="../western/western.html">Western</a></li>
+                    <li><a href="../adventure/adventure.html">Adventure</a></li>
+                    <li><a href="../Noir/noir.html">Noir</a></li>
+                    <li><a href="../historical/historical.html">Historical</a></li>
+                    <li><a href="../musical/musical.html">Musical</a></li>
+                    <li><a href="../mystery/mystery.html">Mystery</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- TOPBAR (Identic cu Demo) -->
+            <header class="topbar">
+                <div class="search-box">
+                    <input type="text" placeholder="Cauta un film...">
+                </div>
+                <div id="auth-container"></div>
+            </header>
+
+            <section class="new-movies">
+                <!-- 1. SCHIMBĂ TITLUL AICI -->
+                <h2>Sci-Fi Movies</h2> 
+                
+                <!-- 2. SCHIMBĂ ID-UL AICI (1-Drama, 2-Thriller, 3-Romance, etc.) -->
+                <div id="category-id-provider" data-id="5"></div>
+
+                <div id="container-filme" class="movies-grid"></div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

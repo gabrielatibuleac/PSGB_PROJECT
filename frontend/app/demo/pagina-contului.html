@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Contul Meu - MovieNest</title>
+    <link rel="stylesheet" href="demo.css">
+    <style>
+        /* Ne asiguram ca meniul se vede cand e deschis */
+        .submenu.show { display: flex !important; flex-direction: column; }
+        .avatar-big { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #4CAF50; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <a href="demo.html" class="logo">MOVIE</a>
+            <nav class="menu">
+                <a href="demo.html" class="menu-item">Home</a>
+                <div class="menu-item categories-header" id="categories-toggle" style="cursor:pointer">
+                    <img src="../../public/list.png" class="icon-mic"> Categories 
+                    <img src="../../public/sageata.png" class="icon-sageata">
+                </div>
+                <ul class="submenu" id="categories-menu">
+                      <li><a href="../drama/drama.html">Drama</a></li>
+                    <li><a href="../thriller/thriller.html">Thriller</a></li>
+                    <li><a href="../romance/romance.html">Romance</a></li>
+                    <li><a href="../comedy/comedy.html">Comedy</a></li>
+                    <li><a href="../action/action.html">Action</a></li>
+                    <li><a href="../anime/anime.html">Anime</a></li>
+                    <li><a href="../fantasy/fantasy.html">Fantasy</a></li>
+                    <li><a href="../scifi/scifi.html">Sci-Fi</a></li>
+                    <li><a href="../western/western.html">Western</a></li>
+                    <li><a href="../adventure/adventure.html">Adventure</a></li>
+                    <li><a href="../Noir/noir.html">Noir</a></li>
+                    <li><a href="../historical/historical.html">Historical</a></li>
+                    <li><a href="../musical/musical.html">Musical</a></li>
+                    <li><a href="../mystery/mystery.html">Mystery</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <h1>Profilul meu</h1>
+            </header>
+
+            <div style="display: flex; gap: 30px; flex-direction: column; align-items: flex-start;">
+                <!-- CARD PROFIL -->
+                <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; min-width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
+                    <img src="../../public/account.jpg" class="avatar-big" alt="Avatar">
+                    <h2 id="user-name" style="margin-top: 20px; color: #333;">Încărcare nume...</h2>
+                    <p id="user-email" style="color: #888; margin-bottom: 25px;">Încărcare email...</p>
+                    <button id="logout-btn" style="background: #ff4757; color: white; border: none; padding: 12px 35px; border-radius: 25px; font-weight: 600; cursor: pointer;">Logout</button>
+                </div>
+
+                <!-- WATCHLIST -->
+                <section class="new-movies" style="width: 100%;">
+                    <h2>Watchlist-ul meu (Filme Liked)</h2>
+                    <div id="watchlist-container" class="movies-grid">
+                        <!-- Filmele vin din SQL -->
+                    </div>
+                    <section class="new-movies" style="width: 100%; margin-top: 40px;">
+    <h2>Istoric Vizualizări</h2>
+    <div id="history-container" style="background: white; padding: 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <p style="color:#888;">Se încarcă istoricul...</p>
+    </div>
+</section>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- 1. LOGICA MENIU CATEGORII ---
+        const toggleBtn = document.getElementById('categories-toggle');
+        const categoriesMenu = document.getElementById('categories-menu');
+        if(toggleBtn) {
+            toggleBtn.onclick = () => {
+                categoriesMenu.classList.toggle('show');
+            };
+        }
+
+        // --- 2. LOGICA LOGOUT ---
+        document.getElementById('logout-btn').onclick = () => {
+            localStorage.removeItem('userId'); // Stergem cheia de logare
+            window.location.href = 'demo.html'; // Trimitem utilizatorul la Home
+        };
+
+        // --- 3. INCARCARE DATE PROFIL (NUME SI EMAIL) ---
+        const uid = localStorage.getItem('userId');
+        if (!uid) {
+            window.location.href = '../login/login.html';
+        } else {
+            // Cerem datele de la Java folosind ID-ul salvat in browser
+            fetch(`http://localhost:8081/profil?id=${uid}`)
+                .then(res => res.json())
+                .then(data => {
+                    console.log("Date Profil Primite:", data);
+                    if(data.nume) {
+                        document.getElementById('user-name').innerText = data.nume;
+                        document.getElementById('user-email').innerText = data.email;
+                    } else {
+                        document.getElementById('user-name').innerText = "Utilizator necunoscut";
+                    }
+                })
+                .catch(err => {
+                    document.getElementById('user-name').innerText = "Eroare la conectare";
+                });
+
+          // --- 4. INCARCARE WATCHLIST (REPARAT) ---
+fetch(`http://localhost:8081/get-watchlist?user=${uid}`) // Am adaugat ?user=ID
+    .then(res => res.json())
+    .then(filme => {
+        const container = document.getElementById('watchlist-container');
+        container.innerHTML = ""; // Curatam textul "Nu ai salvat..."
+
+        if (filme.length === 0) {
+            container.innerHTML = "<p>Nu ai salvat niciun film.</p>";
+        } else {
+            filme.forEach(f => {
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                // Folosim calea corectă către poze și titlu
+                card.innerHTML = `
+                    <img src="${f.imagine}" class="movie-poster">
+                    <h3>${f.titlu}</h3>
+                `;
+                // Opțional: trimite la pagina filmului la click
+                card.onclick = () => window.location.href = `film.html?id=${f.id}`;
+                container.appendChild(card);
+            });
+        }
+    })
+    .catch(err => console.error("Eroare incarcare watchlist:", err));
+        }
+        // --- 5. ÎNCĂRCARE ISTORIC ---
+        fetch(`http://localhost:8081/get-history?user=${uid}`)
+            .then(res => res.json())
+            .then(history => {
+                const hContainer = document.getElementById('history-container');
+                if(history.length === 0) {
+                    hContainer.innerHTML = "<p>Nu ai vizionat niciun film încă.</p>";
+                } else {
+                    let html = '<table style="width:100%; text-align:left; border-collapse:collapse;">';
+                    html += '<tr style="color:#4CAF50; border-bottom:2px solid #f5f5f5;"><th style="padding:10px;">Film</th><th style="padding:10px;">Format</th><th style="padding:10px;">Data</th></tr>';
+                    history.forEach(h => {
+                        html += `<tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:12px;"><b>${h.film}</b></td>
+                            <td style="padding:12px;"><span class="source-quality">${h.format}</span></td>
+                            <td style="padding:12px; font-size:12px; color:#999;">${h.data}</td>
+                        </tr>`;
+                    });
+                    html += '</table>';
+                    hContainer.innerHTML = html;
+                }
+            });
+    </script>
+</body>
+</html>

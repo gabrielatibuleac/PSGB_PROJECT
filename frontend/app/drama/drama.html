@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drama - Movie App</title>
+    <link rel="stylesheet" href="../demo/demo.css"> <!-- Iese din romance, intra in demo -->
+<script src="../demo/demo.js" defer></script>
+    <script src="drama.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR IDENTIC CU DEMO -->
+        <aside class="sidebar">
+            <a href="../demo/demo.html" class="logo">MOVIE</a>
+            <nav class="menu">
+                <a href="../demo/demo.html" class="menu-item">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                
+                <div class="menu-item categories-header active" id="categories-toggle">
+                    <img src="../../public/list.png" alt="Categorii" class="icon-mic"> Categories 
+                    <img src="../../public/sageata.png" alt="Deschide" class="icon-sageata">
+                </div>
+                
+                <ul class="submenu show" id="categories-menu">
+                      <li><a href="../drama/drama.html">Drama</a></li>
+                    <li><a href="../thriller/thriller.html">Thriller</a></li>
+                    <li><a href="../romance/romance.html">Romance</a></li>
+                    <li><a href="../comedy/comedy.html">Comedy</a></li>
+                    <li><a href="../action/action.html">Action</a></li>
+                    <li><a href="../anime/anime.html">Anime</a></li>
+                    <li><a href="../fantasy/fantasy.html">Fantasy</a></li>
+                    <li><a href="../scifi/scifi.html">Sci-Fi</a></li>
+                    <li><a href="../western/western.html">Western</a></li>
+                    <li><a href="../adventure/adventure.html">Adventure</a></li>
+                    <li><a href="../Noir/noir.html">Noir</a></li>
+                    <li><a href="../historical/historical.html">Historical</a></li>
+                    <li><a href="../musical/musical.html">Musical</a></li>
+                    <li><a href="../mystery/mystery.html">Mystery</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <!-- TOPBAR IDENTIC CU DEMO -->
+            <header class="topbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cauta un film de drama...">
+                </div>
+                
+                <nav class="top-nav">
+                    <div id="auth-container"></div>
+                </nav>
+            </header>
+
+            <section class="new-movies">
+                <h2 style="font-size: 24px; margin-bottom: 20px;">Drama Movies</h2>
+                
+                <!-- ID-ul pentru Backend -->
+                <div id="category-id-provider" data-id="1"></div>
+
+                <!-- Containerul unde se vor incarca filmele din Java -->
+                <div id="container-filme" class="movies-grid">
+                    <!-- Aici vor aparea filmele din DB -->
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

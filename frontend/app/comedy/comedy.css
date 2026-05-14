@@ -1,0 +1,6 @@
+.movie-poster {
+    width: 100%;
+    height: 260px;
+    object-fit: cover; /* Esențial pentru poze de mărimi diferite */
+    border-radius: 15px;
+}

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalii Film - MovieNest</title>
+    
+    <link rel="stylesheet" href="demo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* --- Stiluri extra pentru Pagina de Detalii --- */
+        .movie-details-wrapper {
+            display: flex; gap: 40px; background: white; padding: 40px;
+            border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-top: 20px;
+        }
+        .left-side img {
+            width: 300px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); object-fit: cover;
+        }
+        .right-side { flex: 1; }
+        .movie-title { font-size: 42px; font-weight: 800; margin: 0; color: #222; }
+        .movie-meta { color: #888; margin: 10px 0 25px 0; font-size: 18px; }
+        .movie-desc { line-height: 1.7; color: #555; font-size: 16px; margin-bottom: 35px; }
+        .label { font-weight: 700; text-transform: uppercase; color: #4CAF50; font-size: 13px; margin-bottom: 15px; display: block; }
+
+        /* Stil Actori/Regizori */
+        .person-card { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .person-img { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; border: 2px solid #4CAF50; background: #eee; }
+        .person-info b { display: block; font-size: 16px; color: #333; }
+        .person-info span { color: #888; font-size: 14px; }
+        .cast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        /* Ne asiguram ca meniul dropdown se vede cand e deschis */
+        .submenu.show { display: flex !important; flex-direction: column; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <a href="demo.html" class="logo">MOVIE</a>
+            <nav class="menu">
+                <a href="demo.html" class="menu-item">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                
+                <div class="menu-item categories-header" id="categories-toggle">
+                    <img src="../../public/list.png" alt="Categorii" class="icon-mic"> Categories 
+                    <img src="../../public/sageata.png" alt="Deschide" class="icon-sageata">
+                </div>
+                
+                <ul class="submenu" id="categories-menu">
+                      <li><a href="../drama/drama.html">Drama</a></li>
+                    <li><a href="../thriller/thriller.html">Thriller</a></li>
+                    <li><a href="../romance/romance.html">Romance</a></li>
+                    <li><a href="../comedy/comedy.html">Comedy</a></li>
+                    <li><a href="../action/action.html">Action</a></li>
+                    <li><a href="../anime/anime.html">Anime</a></li>
+                    <li><a href="../fantasy/fantasy.html">Fantasy</a></li>
+                    <li><a href="../scifi/scifi.html">Sci-Fi</a></li>
+                    <li><a href="../western/western.html">Western</a></li>
+                    <li><a href="../adventure/adventure.html">Adventure</a></li>
+                    <li><a href="../Noir/noir.html">Noir</a></li>
+                    <li><a href="../historical/historical.html">Historical</a></li>
+                    <li><a href="../musical/musical.html">Musical</a></li>
+                    <li><a href="../mystery/mystery.html">Mystery</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cauta alt film...">
+                </div>
+                <nav class="top-nav">
+                    <div id="auth-container"></div>
+                </nav>
+            </header>
+
+            <div class="movie-details-wrapper">
+                <div class="left-side">
+                    <img id="main-poster" src="" alt="Poster">
+                    
+                    <div style="margin-top: 25px; display: flex; flex-direction: column; gap: 15px; background: #f9f9f9; padding: 20px; border-radius: 15px;">
+                        
+                        <button id="btn-watch-detail" style="background: #4CAF50; color: white; border: none; padding: 12px; border-radius: 25px; font-weight: 600; cursor: pointer; width: 100%;">
+                            <i class="fas fa-play"></i> Watch
+                        </button>
+
+                        <a id="trailer-link-detail" href="#" target="_blank" style="text-decoration: none; color: #333; font-size: 14px; display: none; align-items: center; gap: 10px; justify-content: center;">
+                            <i class="fab fa-youtube" style="color: red; font-size: 20px;"></i> Watch Trailer
+                        </a>
+
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; border-top: 1px solid #eee; margin-top: 5px; padding-top: 10px;">
+                            <button id="btn-like-detail" class="btn-heart" style="width: 40px; height: 40px; background: rgba(0,0,0,0.05); border: 1px solid #ddd;">
+                                <img src="../../public/inima.png" alt="Like" class="icon-inima">
+                            </button>
+                            <span id="like-status-text" style="font-size: 13px; color: #777;">Save to Watchlist</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="watch-modal" class="modal-overlay">
+                    <div class="modal-card">
+                        <div class="modal-header">
+                            <h2 id="modal-movie-title">Watch Movie</h2>
+                            <span class="close-modal">&times;</span>
+                        </div>
+                        <p>Choose a platform to watch this movie:</p>
+                        <div class="sources-container">
+                            <p style="color: #888;">Se încarcă formatele...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="right-side">
+                    <h1 id="main-title">Încărcare...</h1>
+                    <div id="main-meta" class="movie-meta"></div>
+                    <p id="main-desc" class="movie-desc"></p>
+
+                    <span class="label">Regizor</span>
+                    <div id="director-container"></div>
+
+                    <span class="label" style="margin-top: 30px;">Distribuție (Cast)</span>
+                    <div id="cast-grid" class="cast-grid"></div>
+                    
+                    <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px;">
+                        <span class="label">Comentarii</span>
+                        
+                        <div id="comment-form" style="margin-bottom: 30px; display: none;">
+                            <textarea id="comment-text" placeholder="Scrie părerea ta..." style="width: 100%; height: 80px; padding: 10px; border-radius: 10px; border: 1px solid #ddd;"></textarea>
+                            
+                            <div style="margin: 10px 0; display: flex; align-items: center; gap: 10px;">
+                                <label style="font-size: 14px; font-weight: 600;">Nota ta:</label>
+                                <select id="rating-val" style="padding: 5px; border-radius: 5px; outline: none; border: 1px solid #ddd;">
+                                    <option value="10">10 - Superb</option>
+                                    <option value="9">9 - Excelent</option>
+                                    <option value="8">8 - Foarte Bun</option>
+                                    <option value="7">7 - Bun</option>
+                                    <option value="6">6 - Bunicel</option>
+                                    <option value="5">5 - Mediocru</option>
+                                    <option value="4">4 - Sub medie</option>
+                                    <option value="3">3 - Slab</option>
+                                    <option value="2">2 - Foarte slab</option>
+                                    <option value="1">1 - Pierdere de timp</option>
+                                </select>
+                            </div>
+
+                            <button id="btn-submit-comment" style="margin-top: 10px; background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer;">Trimite</button>
+                        </div>
+                        <p id="login-msg" style="color: #888; font-size: 14px;">Trebuie să fii <a href="../login/login.html">logat</a> pentru a lăsa un comentariu.</p>
+
+                        <div id="comments-list">
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="demo.js"></script> 
+   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const movieId = urlParams.get('id') || 3;
+        
+        // REPARARE LOGARE
+        const rawUserId = localStorage.getItem('userId');
+        const userId = (rawUserId && rawUserId !== "0") ? rawUserId : null;
+
+        const commentForm = document.getElementById('comment-form');
+        const loginMsg = document.getElementById('login-msg');
+
+        if (userId) {
+            if(commentForm) commentForm.style.display = 'block';
+            if(loginMsg) loginMsg.style.display = 'none';
+        } else {
+            if(commentForm) commentForm.style.display = 'none';
+            if(loginMsg) loginMsg.style.display = 'block';
+        }
+
+        // FUNCȚIE NOUĂ: Logare Istoric (Se apelează la click pe un format)
+        window.logWatch = (formatId) => {
+            if(!userId) return;
+            fetch(`http://localhost:8081/log-watch?user=${userId}&movie=${movieId}&format=${formatId}`);
+        };
+
+        // ÎNCĂRCARE FORMATE ÎN MODAL DIN DB SAU REZERVĂ
+        fetch(`http://localhost:8081/get-formats?id=${movieId}`)
+            .then(res => res.json())
+            .then(formats => {
+                const container = document.querySelector('.sources-container');
+                if(formats.length > 0) {
+                    container.innerHTML = ""; // Ștergem textul "Se încarcă"
+                    formats.forEach(f => {
+                        container.innerHTML += `
+                            <div class="source-item">
+                                <div class="source-info">
+                                    <div><strong>${f.nume}</strong><span>${f.calitate}</span></div>
+                                </div>
+                                <a href="${f.link}" target="_blank" class="btn-go" onclick="logWatch(${f.id})">Watch</a>
+                            </div>`;
+                    });
+                } else {
+                    // Dacă nu există nimic în baza de date, punem butoanele originale de rezervă!
+                    container.innerHTML = `
+                        <div class="source-item">
+                            <div class="source-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix" style="width: 40px; height: 25px; object-fit: contain;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <strong>Netflix</strong>
+                                    <span style="font-size: 12px; color: #888;">Subscription</span>
+                                </div>
+                            </div>
+                            <a href="https://www.netflix.com" target="_blank" class="btn-go" onclick="logWatch(1)">Watch</a>
+                        </div>
+                        <div class="source-item">
+                            <div class="source-info">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/HBO_logo.svg" alt="HBO" style="width: 40px; height: 25px; object-fit: contain;">
+                                <div style="display: flex; flex-direction: column;">
+                                    <strong>HBO Max</strong>
+                                    <span style="font-size: 12px; color: #888;">Subscription</span>
+                                </div>
+                            </div>
+                            <a href="https://www.hbomax.com" target="_blank" class="btn-go" onclick="logWatch(2)">Watch</a>
+                        </div>
+                    `;
+                }
+            });
+
+        // 1. ÎNCĂRCARE DETALII FILM
+        fetch(`http://localhost:8081/movie-details?id=${movieId}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('main-title').innerText = data.titlu;
+                document.getElementById('modal-movie-title').innerText = "Watch " + data.titlu;
+                document.getElementById('main-meta').innerText = data.an;
+                document.getElementById('main-desc').innerText = data.descriere;
+                document.getElementById('main-poster').src = data.imagine;
+
+                const trailerLink = document.getElementById('trailer-link-detail');
+                if (data.trailer && data.trailer.trim() !== "") {
+                    trailerLink.href = data.trailer;
+                } else {
+                    trailerLink.href = `https://www.youtube.com/results?search_query=trailer+${encodeURIComponent(data.titlu)}`;
+                }
+                trailerLink.style.display = "flex";
+
+                const dirContainer = document.getElementById('director-container');
+                dirContainer.innerHTML = ""; 
+                if (data.directori && data.directori.length > 0) {
+                    data.directori.forEach(d => {
+                        const poza = (d.poza && d.poza.trim() !== "") ? d.poza : "../../public/account.jpg";
+                        dirContainer.innerHTML += `
+                            <div class="person-card">
+                                <img src="${poza}" class="person-img" alt="${d.nume}">
+                                <div class="person-info">
+                                    <b>${d.nume}</b>
+                                    <span>Regizor</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    dirContainer.innerHTML = "<p style='color:#888;'>Nespecificat</p>";
+                }
+
+                const castGrid = document.getElementById('cast-grid');
+                castGrid.innerHTML = ""; 
+                if (data.actori && data.actori.length > 0) {
+                    data.actori.forEach(a => {
+                        const poza = (a.poza && a.poza.trim() !== "") ? a.poza : "../../public/account.jpg";
+                        castGrid.innerHTML += `
+                            <div class="person-card">
+                                <img src="${poza}" class="person-img" alt="${a.nume}">
+                                <div class="person-info">
+                                    <b>${a.nume}</b>
+                                    <span>${a.rol}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    castGrid.innerHTML = "<p style='color:#888;'>Nespecificat</p>";
+                }
+            });
+
+        // 2. MODAL LOGIC
+        const watchBtn = document.getElementById('btn-watch-detail');
+        const modal = document.getElementById('watch-modal');
+        const closeModal = document.querySelector('.close-modal');
+
+        if (watchBtn && modal) {
+            watchBtn.onclick = () => modal.classList.add('show');
+            closeModal.onclick = () => modal.classList.remove('show');
+            window.onclick = (e) => { if (e.target == modal) modal.classList.remove('show'); };
+        }
+
+        // 3. WATCHLIST LOGIC
+        const likeBtn = document.getElementById('btn-like-detail');
+        const likeText = document.getElementById('like-status-text');
+
+        if (userId) {
+            fetch(`http://localhost:8081/check-watchlist?user=${userId}&movie=${movieId}`)
+                .then(res => res.text())
+                .then(isIn => {
+                    if (isIn === "true") {
+                        likeBtn.style.background = "#ff4757";
+                        likeText.innerText = "În Watchlist";
+                    }
+                });
+        }
+
+        likeBtn.onclick = () => {
+            if (!userId) return alert("Trebuie să fii logat!");
+            fetch(`http://localhost:8081/add-to-watchlist?user=${userId}&movie=${movieId}`)
+                .then(res => res.text())
+                .then(msg => {
+                    if (msg === "Adaugat") {
+                        likeBtn.style.background = "#ff4757";
+                        likeText.innerText = "În Watchlist";
+                    } else {
+                        likeBtn.style.background = "rgba(0,0,0,0.05)";
+                        likeText.innerText = "Save to Watchlist";
+                    }
+                });
+        };
+
+        // 4. COMMENTS LOGIC
+        function loadComments() {
+            fetch(`http://localhost:8081/get-comments?id=${movieId}`)
+                .then(res => res.json())
+                .then(comments => {
+                    const list = document.getElementById('comments-list');
+                    list.innerHTML = comments.length === 0 ? "<p style='color:#888;'>Fii primul care lasă un comentariu!</p>" : "";
+                    comments.forEach(c => {
+                        list.innerHTML += `<div style="background:#f9f9f9;padding:15px;border-radius:15px;margin-bottom:10px;border-left:5px solid #4CAF50;"><b>${c.autor}</b><p style="margin-top:5px;color:#555;">${c.text}</p></div>`;
+                    });
+                });
+        }
+        loadComments();
+
+        const btnSubmit = document.getElementById('btn-submit-comment');
+        if(btnSubmit) {
+            btnSubmit.onclick = () => {
+                const text = document.getElementById('comment-text').value;
+                const rating = document.getElementById('rating-val') ? document.getElementById('rating-val').value : 10;
+                
+                if(!text.trim()) return;
+                
+                fetch(`http://localhost:8081/add-comment?user=${userId}&movie=${movieId}&text=${encodeURIComponent(text)}&rating=${rating}`)
+                    .then(() => { 
+                        document.getElementById('comment-text').value = ""; 
+                        loadComments(); 
+                    });
+            };
+        }
+    });
+    </script>
+</body>
+</html>

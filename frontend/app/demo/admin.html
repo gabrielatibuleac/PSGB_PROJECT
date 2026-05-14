@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - MovieNest</title>
+    <link rel="stylesheet" href="demo.css">
+    <style>
+        .admin-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 600px; margin: 20px auto; }
+        .admin-form input, .admin-form textarea, .admin-form select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; }
+        .btn-add { background: #4CAF50; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <a href="demo.html" class="logo">MOVIE ADMIN</a>
+            <nav class="menu">
+                <a href="demo.html" class="menu-item">Inapoi la Site</a>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <h1>Adaugă un film nou</h1>
+            <div class="admin-form">
+                <input type="text" id="m-titlu" placeholder="Titlu Film">
+                <textarea id="m-desc" placeholder="Descriere Film"></textarea>
+                <input type="number" id="m-an" placeholder="An Lansare (ex: 2024)">
+                <input type="text" id="m-poster" placeholder="Link Poster (URL Imagine)">
+                <input type="text" id="m-trailer" placeholder="Link Trailer YouTube">
+                
+                <label>Categorie:</label>
+                <select id="m-cat">
+                    <option value="1">Drama</option>
+                    <option value="2">Thriller</option>
+                    <option value="3">Romance</option>
+                    <option value="4">Comedy</option>
+                    <option value="5">Action</option>
+                </select>
+
+                <button class="btn-add" onclick="saveMovie()">Salvează Filmul</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function saveMovie() {
+            const t = document.getElementById('m-titlu').value;
+            const d = document.getElementById('m-desc').value;
+            const a = document.getElementById('m-an').value;
+            const p = document.getElementById('m-poster').value;
+            const tr = document.getElementById('m-trailer').value;
+            const c = document.getElementById('m-cat').value;
+
+            if(!t || !d || !a) return alert("Completează titlul, descrierea și anul!");
+
+            const url = `http://localhost:8081/add-movie?titlu=${encodeURIComponent(t)}&desc=${encodeURIComponent(d)}&an=${a}&poster=${encodeURIComponent(p)}&trailer=${encodeURIComponent(tr)}&cat=${c}`;
+
+            fetch(url)
+                .then(res => res.text())
+                .then(msg => {
+                    if(msg === "Succes") {
+                        alert("Filmul a fost adăugat cu succes!");
+                        window.location.href = "demo.html";
+                    } else {
+                        alert("Eroare la salvare.");
+                    }
+                });
+        }
+    </script>
+</body>
+</html>

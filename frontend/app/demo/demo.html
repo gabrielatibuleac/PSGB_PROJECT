@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Demo</title>
+    <link rel="stylesheet" href="demo.css">
+    <script src="demo.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <aside class="sidebar">
+            <a href="demo.html" class="logo">MOVIE</a>
+            
+            <nav class="menu">
+                <a href="demo.html" class="menu-item active">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                
+              <div class="menu-item categories-header" id="categories-toggle">
+                    <img src="../../public/list.png" alt="Categorii" class="icon-mic"> Categories 
+                    <img src="../../public/sageata.png" alt="Deschide" class="icon-sageata">
+                </div>
+                
+                <ul class="submenu" id="categories-menu">
+                    <li><a href="../drama/drama.html">Drama</a></li>
+                    <li><a href="../thriller/thriller.html">Thriller</a></li>
+                    <li><a href="../romance/romance.html">Romance</a></li>
+                    <li><a href="../comedy/comedy.html">Comedy</a></li>
+                    <li><a href="../action/action.html">Action</a></li>
+                    <li><a href="../anime/anime.html">Anime</a></li>
+                    <li><a href="../fantasy/fantasy.html">Fantasy</a></li>
+                    <li><a href="../scifi/scifi.html">Sci-Fi</a></li>
+                    <li><a href="../western/western.html">Western</a></li>
+                    <li><a href="../adventure/adventure.html">Adventure</a></li>
+                    <li><a href="../Noir/noir.html">Noir</a></li>
+                    <li><a href="../historical/historical.html">Historical</a></li>
+                    <li><a href="../musical/musical.html">Musical</a></li>
+                    <li><a href="../mystery/mystery.html">Mystery</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cauta un film...">
+                </div>
+                
+                <nav class="top-nav">
+                    <div id="auth-container"></div>
+                </nav>
+            </header>
+
+           <section class="hero">
+    <img src="../../public/posterj.jpg" alt="The Pianist" class="hero-bg-img">
+    <div class="hero-overlay"></div> 
+    
+    <div class="hero-content">
+        <h1 onclick="window.location.href='film.html?id=3'" style="cursor:pointer">Interstellar</h1>
+        
+        <div class="tags">
+            <!-- Am transformat span în a și am pus calea către pagini -->
+            <a href="../drama/drama.html" class="tag-link">Drama</a>
+        </div>
+        
+        <p>In a dystopian future where Earth has become near-unhabitable...</p>
+        
+        <div class="hero-actions">
+            <button class="btn-watch">Watch</button>
+            <button class="btn-heart">
+                <img src="../../public/inima.png" alt="Like" class="icon-inima">
+            </button>
+            
+            <!-- Am adăugat link-ul de YouTube și target="_blank" ca să se deschidă în tab nou -->
+            <a href="https://www.youtube.com/watch?v=zSWdZVtXT7E" target="_blank" class="trailer-link">
+                Watch Trailer <i class="far fa-play-circle"></i>
+            </a>
+        </div>
+    </div>
+    <!-- MODAL PENTRU WATCH -->
+<div id="watch-modal" class="modal-overlay">
+    <div class="modal-card">
+        <div class="modal-header">
+            <h2>Watch Interstellar</h2>
+            <span class="close-modal">&times;</span>
+        </div>
+        <p>Choose a platform to watch this movie:</p>
+        
+        <div class="sources-container">
+            <!-- Sursa 1 -->
+            <div class="source-item">
+                <div class="source-info">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg" alt="Netflix">
+                    <div>
+                        <strong>Netflix</strong>
+                        <span>Subscription</span>
+                    </div>
+                </div>
+                <div class="source-quality">4K / Ultra HD</div>
+                <a href="https://www.netflix.com" target="_blank" class="btn-go">Watch Now</a>
+            </div>
+
+            <!-- Sursa 2 -->
+            <div class="source-item">
+                <div class="source-info">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/HBO_logo.svg" alt="HBO">
+                    <div>
+                        <strong>HBO Max</strong>
+                        <span>Subscription</span>
+                    </div>
+                </div>
+                <div class="source-quality">1080p / HD</div>
+                <a href="https://www.hbomax.com" target="_blank" class="btn-go">Watch Now</a>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+            <section class="new-movies">
+    <h2>Movies from our database</h2>
+    <div class="movies-grid" id="home-movies-grid">
+        <!-- Gol! Se va umple din JS -->
+    </div>
+</section>
+            </main>
+    </div>
+</body>
+</html>
