@@ -1,4 +1,4 @@
-/* --- SETĂRI GENERALE --- */
+
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +17,6 @@ body {
     overflow: hidden;
 }
 
-/* --- SIDEBAR (MENIUL LATERAL) --- */
 .sidebar {
     width: 260px;
     background-color: #fff;
@@ -59,14 +58,13 @@ body {
     color: #4CAF50;
 }
 
-/* Iconițe Sidebar */
 .icon-mic { width: 18px; }
 .icon-sageata { width: 12px; margin-left: auto; transition: transform 0.3s; }
 
 .submenu {
     list-style: none;
     padding-left: 45px;
-    display: none; /* Ascuns implicit, JS-ul il va arata prin .show */
+    display: none; 
     flex-direction: column;
     gap: 12px;
     margin-top: 10px;
@@ -82,7 +80,6 @@ body {
     font-size: 14px;
 }
 
-/* --- CONȚINUT PRINCIPAL --- */
 .main-content {
     flex: 1;
     overflow-y: auto;
@@ -113,10 +110,10 @@ body {
     width: 100%;
 }
 
-/* --- SECȚIUNEA FILME (SPAȚIERE TITLU) --- */
+
 .new-movies h2 {
     font-size: 24px;
-    margin-bottom: 25px; /* <--- SPAȚIUL TĂU ÎNTRE TITLU ȘI POZE */
+    margin-bottom: 25px; 
     color: #333;
     font-weight: 700;
 }
@@ -156,7 +153,6 @@ body {
     color: #888;
 }
 
-/* BUTON LOGIN */
 .login-link-btn {
     background-color: #4CAF50;
     color: white;

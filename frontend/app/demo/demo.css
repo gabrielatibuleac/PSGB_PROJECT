@@ -1,4 +1,3 @@
-/* --- Setari Generale --- */
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +16,6 @@ body {
     overflow: hidden;
 }
 
-/* --- Meniul Lateral (Sidebar) --- */
 .sidebar {
     width: 260px;
     background-color: #fff;
@@ -126,7 +124,6 @@ body {
     color: #333;
 }
 
-/* --- Continutul Principal (Main) --- */
 .main-content {
     flex: 1;
     overflow-y: auto;
@@ -197,8 +194,6 @@ body {
     background-color: #45a049;
 }
 
-/* --- Sectiunea Hero --- */
-/* --- Sectiunea Hero Noua --- */
 .hero {
     position: relative;
     border-radius: 20px;
@@ -208,7 +203,7 @@ body {
     padding: 40px;
     color: #fff;
     margin-bottom: 40px;
-    overflow: hidden; /* Ca sa nu iasa poza din margini rotunjite */
+    overflow: hidden; 
 }
 
 /* Imaginea din spate de la Hero */
@@ -218,11 +213,10 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Face poza sa umple tot spatiul frumos */
+    object-fit: cover; 
     z-index: 1;
 }
 
-/* Umbra neagra peste poza ca sa se citeasca textul alb */
 .hero-overlay {
     position: absolute;
     top: 0;
@@ -233,21 +227,16 @@ body {
     z-index: 2;
 }
 
-/* Textul si butoanele din Hero */
 .hero-content {
     position: relative;
-    z-index: 3; /* Le pune deasupra pozei si umbrei */
+    z-index: 3; 
 }
 
-/* ... pastreaza restul claselor tale pt .hero h1, .tags, etc. ... */
-
-
-/* --- Stilizare pentru pozele din carduri --- */
 .movie-poster {
     width: 100%;
     height: 260px;
     border-radius: 15px;
-    object-fit: cover; /* Foarte important ca pozele sa nu se turteasca! */
+    object-fit: cover; 
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     display: block;
 }
@@ -295,7 +284,6 @@ body {
     font-size: 14px;
 }
 
-
 .trailer-link {
     color: white;
     text-decoration: none;
@@ -313,30 +301,28 @@ body {
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
-    display: inline-block; /* Îl face un bloc solid pe care poți da click */
+    display: inline-block; 
     cursor: pointer; 
-    user-select: none; /* Împiedică selectarea textului cu albastru */
+    user-select: none; 
     position: relative;
     z-index: 10;
 }
-/* Reparație butoane Watch din Modal și Trailer */
+
 .btn-go, #trailer-link-detail {
-    display: inline-flex !important; /* Îl forțează să fie un element solid */
+    display: inline-flex !important; 
     align-items: center;
     justify-content: center;
-    cursor: pointer !important; /* Forțează apariția mânuței */
+    cursor: pointer !important; 
     position: relative;
-    z-index: 999; /* Îl pune deasupra oricărui strat invizibil */
-    pointer-events: auto !important; /* Se asigură că primește click-uri */
+    z-index: 999; 
+    pointer-events: auto !important; 
 }
 
-/* Stil extra pentru a fi sigur că se vede click-ul pe trailer */
 #trailer-link-detail:hover {
     text-decoration: underline;
     opacity: 0.8;
 }
 
-/* --- Grila Filme --- */
 .new-movies h2 {
     font-size: 20px;
     margin-bottom: 20px;
@@ -371,21 +357,21 @@ body {
     background-color: #ddd;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-/* --- Setari pentru noile poze-iconite --- */
+
 .icon-mic {
     width: 18px;
     height: 18px;
-    object-fit: contain; /* Mentine proportia pozei */
+    object-fit: contain; 
 }
 
 .icon-sageata {
     width: 12px;
     height: 12px;
-    margin-left: auto; /* Impinge sageata in partea dreapta a meniului */
+    margin-left: auto; 
     transition: transform 0.3s;
 }
 
-/* Cand meniul e deschis, sageata ta se va intoarce invers */
+
 .categories-header.open .icon-sageata {
     transform: rotate(180deg);
 }
@@ -402,13 +388,13 @@ body {
     margin-left: 8px;
     object-fit: contain;
 }
-/* Refacem design-ul butonului in care sta inima */
+
 .btn-heart {
-    background-color: rgba(255, 255, 255, 0.2); /* Un cerc alb-transparent finut */
-    border: none; /* Scoatem marginea urata de la browser */
+    background-color: rgba(255, 255, 255, 0.2); 
+    border: none; 
     width: 45px;
     height: 45px;
-    border-radius: 50%; /* Face butonul perfect rotund */
+    border-radius: 50%; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -416,18 +402,12 @@ body {
     transition: background-color 0.3s;
 }
 
-/* Efect cand treci cu mouse-ul peste el */
 .btn-heart:hover {
     background-color: rgba(255, 255, 255, 0.4);
 }
-/* =========================================
-   RESPONSIVE DESIGN (Telefoane si Tablete)
-   ========================================= */
 
-/* Pentru ecrane medii (Tablete) */
-/* Stil pentru link-urile din tag-uri (Drama, Romance) */
 .tags a.tag-link {
-    text-decoration: none; /* Scoate linia de sub text */
+    text-decoration: none; 
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.4);
     padding: 5px 15px;
@@ -442,7 +422,6 @@ body {
     border-color: white;
 }
 
-/* Stil pentru link-ul de trailer */
 .trailer-link {
     color: white;
     text-decoration: none;
@@ -455,23 +434,23 @@ body {
 
 .trailer-link:hover {
     opacity: 0.8;
-    text-decoration: underline; /* Opțional: subliniere la hover pentru trailer */
+    text-decoration: underline; 
 }
-/* --- STIL MODAL WATCH --- */
+
 .modal-overlay {
-    display: none; /* Ascuns implicit */
+    display: none; 
     position: fixed;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.85); /* Fundal negru transparent */
+    background: rgba(0, 0, 0, 0.85); 
     z-index: 9999;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(5px); /* Efect de blur pe spate */
+    backdrop-filter: blur(5px); 
 }
 
 .modal-overlay.show {
-    display: flex; /* Afișat când adăugăm clasa .show */
+    display: flex;
 }
 
 .modal-card {
@@ -563,9 +542,8 @@ body {
     }
 }
 
-/* Pentru ecrane mici (Telefoane, sub 768px latime) */
 @media (max-width: 768px) {
-    /* 1. Meniul lateral nu mai sta in stanga, se muta sus */
+    
     .app-container {
         flex-direction: column;
     }
@@ -596,9 +574,8 @@ body {
         margin-top: 10px;
     }
 
-    /* 2. Bara de sus cu lupa si login-ul */
     .topbar {
-        flex-direction: column-reverse; /* Pune login-ul sus si search-ul jos */
+        flex-direction: column-reverse; 
         gap: 15px;
     }
 
@@ -610,7 +587,6 @@ body {
         padding: 20px 15px;
     }
 
-    /* 3. Sectiunea Hero (imaginea mare) */
     .hero {
         height: auto;
         min-height: 300px;
@@ -622,12 +598,11 @@ body {
     }
 
     .hero-actions {
-        flex-wrap: wrap; /* Lasa butoanele sa treaca pe randul urmator daca nu au loc */
+        flex-wrap: wrap; 
         gap: 15px;
     }
 }
 
-/* Pentru ecrane FOARTE mici (Telefoane inguste, sub 480px latime) */
 @media (max-width: 480px) {
     .hero h1 {
         font-size: 22px;
@@ -635,7 +610,7 @@ body {
     
     .btn-watch {
         padding: 10px 20px;
-        width: 100%; /* Butonul de watch pe tot randul */
+        width: 100%;
         text-align: center;
     }
 
@@ -644,7 +619,6 @@ body {
         height: 45px;
     }
 
-    /* Facem cardurile cu filme putin mai mici ca sa incapa minim 2 pe ecran */
     .movies-grid {
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
         gap: 15px;

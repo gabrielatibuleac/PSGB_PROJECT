@@ -5,14 +5,12 @@
     <title>Contul Meu - MovieNest</title>
     <link rel="stylesheet" href="demo.css">
     <style>
-        /* Ne asiguram ca meniul se vede cand e deschis */
         .submenu.show { display: flex !important; flex-direction: column; }
         .avatar-big { width: 100px; height: 100px; border-radius: 50%; border: 3px solid #4CAF50; object-fit: cover; }
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- SIDEBAR -->
         <aside class="sidebar">
             <a href="demo.html" class="logo">MOVIE</a>
             <nav class="menu">
@@ -46,7 +44,6 @@
             </header>
 
             <div style="display: flex; gap: 30px; flex-direction: column; align-items: flex-start;">
-                <!-- CARD PROFIL -->
                 <div style="background: white; padding: 40px; border-radius: 20px; text-align: center; min-width: 350px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);">
                     <img src="../../public/account.jpg" class="avatar-big" alt="Avatar">
                     <h2 id="user-name" style="margin-top: 20px; color: #333;">Încărcare nume...</h2>
@@ -54,11 +51,9 @@
                     <button id="logout-btn" style="background: #ff4757; color: white; border: none; padding: 12px 35px; border-radius: 25px; font-weight: 600; cursor: pointer;">Logout</button>
                 </div>
 
-                <!-- WATCHLIST -->
                 <section class="new-movies" style="width: 100%;">
                     <h2>Watchlist-ul meu (Filme Liked)</h2>
                     <div id="watchlist-container" class="movies-grid">
-                        <!-- Filmele vin din SQL -->
                     </div>
                     <section class="new-movies" style="width: 100%; margin-top: 40px;">
     <h2>Istoric Vizualizări</h2>
@@ -72,7 +67,6 @@
     </div>
 
     <script>
-        // --- 1. LOGICA MENIU CATEGORII ---
         const toggleBtn = document.getElementById('categories-toggle');
         const categoriesMenu = document.getElementById('categories-menu');
         if(toggleBtn) {
@@ -81,18 +75,15 @@
             };
         }
 
-        // --- 2. LOGICA LOGOUT ---
         document.getElementById('logout-btn').onclick = () => {
-            localStorage.removeItem('userId'); // Stergem cheia de logare
-            window.location.href = 'demo.html'; // Trimitem utilizatorul la Home
+            localStorage.removeItem('userId'); 
+            window.location.href = 'demo.html'; 
         };
-
-        // --- 3. INCARCARE DATE PROFIL (NUME SI EMAIL) ---
         const uid = localStorage.getItem('userId');
         if (!uid) {
             window.location.href = '../login/login.html';
         } else {
-            // Cerem datele de la Java folosind ID-ul salvat in browser
+        
             fetch(`http://localhost:8081/profil?id=${uid}`)
                 .then(res => res.json())
                 .then(data => {
@@ -108,12 +99,11 @@
                     document.getElementById('user-name').innerText = "Eroare la conectare";
                 });
 
-          // --- 4. INCARCARE WATCHLIST (REPARAT) ---
-fetch(`http://localhost:8081/get-watchlist?user=${uid}`) // Am adaugat ?user=ID
+fetch(`http://localhost:8081/get-watchlist?user=${uid}`) 
     .then(res => res.json())
     .then(filme => {
         const container = document.getElementById('watchlist-container');
-        container.innerHTML = ""; // Curatam textul "Nu ai salvat..."
+        container.innerHTML = ""; 
 
         if (filme.length === 0) {
             container.innerHTML = "<p>Nu ai salvat niciun film.</p>";
@@ -121,12 +111,10 @@ fetch(`http://localhost:8081/get-watchlist?user=${uid}`) // Am adaugat ?user=ID
             filme.forEach(f => {
                 const card = document.createElement('div');
                 card.className = 'movie-card';
-                // Folosim calea corectă către poze și titlu
                 card.innerHTML = `
                     <img src="${f.imagine}" class="movie-poster">
                     <h3>${f.titlu}</h3>
                 `;
-                // Opțional: trimite la pagina filmului la click
                 card.onclick = () => window.location.href = `film.html?id=${f.id}`;
                 container.appendChild(card);
             });
@@ -134,7 +122,6 @@ fetch(`http://localhost:8081/get-watchlist?user=${uid}`) // Am adaugat ?user=ID
     })
     .catch(err => console.error("Eroare incarcare watchlist:", err));
         }
-        // --- 5. ÎNCĂRCARE ISTORIC ---
         fetch(`http://localhost:8081/get-history?user=${uid}`)
             .then(res => res.json())
             .then(history => {

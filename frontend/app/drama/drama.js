@@ -6,13 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const catId = provider.getAttribute('data-id');
 
-    // Apelăm Backend-ul Java
     fetch(`http://localhost:8081/filme?cat=${catId}`)
         .then(res => res.json())
         .then(filme => {
             container.innerHTML = ""; 
-
-      // În drama.js (dacă îl mai folosești separat), la bucla forEach a filmelor:
 filme.forEach(f => {
     const card = document.createElement('div');
     card.className = 'movie-card';
@@ -21,8 +18,6 @@ filme.forEach(f => {
         <h3>${f.titlu}</h3>
         <p>${f.an}</p>
     `;
-    
-    // Adaugă click-ul:
     card.onclick = () => {
         window.location.href = `../demo/film.html?id=${f.id}`;
     };

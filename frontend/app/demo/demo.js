@@ -131,7 +131,6 @@ if (watchBtn && watchModal) {
             });
     }
 
-    // Butonul Watch deschide modalul existent
     if (heroWatchBtn) {
         const modal = document.getElementById('watch-modal');
         heroWatchBtn.onclick = () => modal.classList.add('show');

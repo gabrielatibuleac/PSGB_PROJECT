@@ -73,12 +73,10 @@
             const p = document.getElementById('m-poster').value;
             const tr = document.getElementById('m-trailer').value;
             const c = document.getElementById('m-cat').value;
-
             // Date regizor
             const dirFname = document.getElementById('m-dir-fname').value;
             const dirLname = document.getElementById('m-dir-lname').value;
             const dirPhoto = document.getElementById('m-dir-photo').value;
-
             // Date actor
             const actFname = document.getElementById('m-act-fname').value;
             const actLname = document.getElementById('m-act-lname').value;
@@ -87,8 +85,6 @@
             if(!t || !d || !a) {
                 return alert("Completează măcar titlul, descrierea și anul filmului!");
             }
-
-            // Construim query string-ul cu toate noile variabile
             const url = `http://localhost:8081/add-movie?titlu=${encodeURIComponent(t)}&desc=${encodeURIComponent(d)}&an=${a}&poster=${encodeURIComponent(p)}&trailer=${encodeURIComponent(tr)}&cat=${c}&dirFname=${encodeURIComponent(dirFname)}&dirLname=${encodeURIComponent(dirLname)}&dirPhoto=${encodeURIComponent(dirPhoto)}&actFname=${encodeURIComponent(actFname)}&actLname=${encodeURIComponent(actLname)}&actPhoto=${encodeURIComponent(actPhoto)}`;
 
             fetch(url)
