@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="demo.css">
     <style>
         .admin-form { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 600px; margin: 20px auto; }
-        .admin-form input, .admin-form textarea, .admin-form select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 10px; }
-        .btn-add { background: #4CAF50; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        .admin-form input, .admin-form textarea, .admin-form select { width: 100%; padding: 10px; margin: 8px 0 15px 0; border: 1px solid #ddd; border-radius: 10px; }
+        .btn-add { background: #4CAF50; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .section-title { font-size: 1.1em; color: #333; margin-top: 15px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -22,6 +23,7 @@
         <main class="main-content">
             <h1>Adaugă un film nou</h1>
             <div class="admin-form">
+                <div class="section-title">Detalii Film</div>
                 <input type="text" id="m-titlu" placeholder="Titlu Film">
                 <textarea id="m-desc" placeholder="Descriere Film"></textarea>
                 <input type="number" id="m-an" placeholder="An Lansare (ex: 2024)">
@@ -31,11 +33,31 @@
                 <label>Categorie:</label>
                 <select id="m-cat">
                     <option value="1">Drama</option>
-                    <option value="2">Thriller</option>
-                    <option value="3">Romance</option>
-                    <option value="4">Comedy</option>
-                    <option value="5">Action</option>
+                    <option value="2">Action</option>
+                    <option value="3">Comedy</option>
+                    <option value="4">Thriller</option>
+                    <option value="5">Sci-Fi</option>
+                    <option value="6">Anime</option>
+                    <option value="7">Romance</option>
+                    <option value="8">Fantasy</option>
+                    <option value="9">Adventure</option>
+                    <option value="10">Documentary</option>
+                    <option value="11">Western</option>
+                    <option value="12">Musical</option>
+                    <option value="13">Mystery</option>
+                    <option value="14">Historical</option>
+                    <option value="15">Noir</option>
                 </select>
+
+                <div class="section-title">Detalii Regizor</div>
+                <input type="text" id="m-dir-fname" placeholder="Prenume Regizor (ex: Christopher)">
+                <input type="text" id="m-dir-lname" placeholder="Nume Regizor (ex: Nolan)">
+                <input type="text" id="m-dir-photo" placeholder="Link Poză Regizor (URL)">
+
+                <div class="section-title">Detalii Actor Principal</div>
+                <input type="text" id="m-act-fname" placeholder="Prenume Actor (ex: Leonardo)">
+                <input type="text" id="m-act-lname" placeholder="Nume Actor (ex: DiCaprio)">
+                <input type="text" id="m-act-photo" placeholder="Link Poză Actor (URL)">
 
                 <button class="btn-add" onclick="saveMovie()">Salvează Filmul</button>
             </div>
@@ -44,6 +66,7 @@
 
     <script>
         function saveMovie() {
+            // Date film
             const t = document.getElementById('m-titlu').value;
             const d = document.getElementById('m-desc').value;
             const a = document.getElementById('m-an').value;
@@ -51,19 +74,36 @@
             const tr = document.getElementById('m-trailer').value;
             const c = document.getElementById('m-cat').value;
 
-            if(!t || !d || !a) return alert("Completează titlul, descrierea și anul!");
+            // Date regizor
+            const dirFname = document.getElementById('m-dir-fname').value;
+            const dirLname = document.getElementById('m-dir-lname').value;
+            const dirPhoto = document.getElementById('m-dir-photo').value;
 
-            const url = `http://localhost:8081/add-movie?titlu=${encodeURIComponent(t)}&desc=${encodeURIComponent(d)}&an=${a}&poster=${encodeURIComponent(p)}&trailer=${encodeURIComponent(tr)}&cat=${c}`;
+            // Date actor
+            const actFname = document.getElementById('m-act-fname').value;
+            const actLname = document.getElementById('m-act-lname').value;
+            const actPhoto = document.getElementById('m-act-photo').value;
+
+            if(!t || !d || !a) {
+                return alert("Completează măcar titlul, descrierea și anul filmului!");
+            }
+
+            // Construim query string-ul cu toate noile variabile
+            const url = `http://localhost:8081/add-movie?titlu=${encodeURIComponent(t)}&desc=${encodeURIComponent(d)}&an=${a}&poster=${encodeURIComponent(p)}&trailer=${encodeURIComponent(tr)}&cat=${c}&dirFname=${encodeURIComponent(dirFname)}&dirLname=${encodeURIComponent(dirLname)}&dirPhoto=${encodeURIComponent(dirPhoto)}&actFname=${encodeURIComponent(actFname)}&actLname=${encodeURIComponent(actLname)}&actPhoto=${encodeURIComponent(actPhoto)}`;
 
             fetch(url)
                 .then(res => res.text())
                 .then(msg => {
                     if(msg === "Succes") {
-                        alert("Filmul a fost adăugat cu succes!");
+                        alert("Filmul, împreună cu regizorul și actorul, au fost adăugate cu succes!");
                         window.location.href = "demo.html";
                     } else {
                         alert("Eroare la salvare.");
                     }
+                })
+                .catch(err => {
+                    console.error("Eroare:", err);
+                    alert("A apărut o eroare de conexiune cu serverul.");
                 });
         }
     </script>

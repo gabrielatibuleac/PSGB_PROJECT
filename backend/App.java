@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.sql.*;
 import java.net.URLDecoder;
+import java.sql.Types;
 import java.nio.charset.StandardCharsets;
 
 public class App {
@@ -47,35 +48,40 @@ public class App {
         });
 
         // --- 2. REGISTER ---
-        server.createContext("/register", (exchange) -> {
-            exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-            String q = exchange.getRequestURI().getQuery();
-            String response = "0";
-            try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass)) {
-                String name = "", email = "", pass = "";
-                for (String pair : q.split("&")) {
-                    String[] kv = pair.split("=");
-                    if (kv.length > 1) {
-                        if (kv[0].equals("name")) name = URLDecoder.decode(kv[1], "UTF-8");
-                        if (kv[0].equals("email")) email = URLDecoder.decode(kv[1], "UTF-8");
-                        if (kv[0].equals("pass")) pass = URLDecoder.decode(kv[1], "UTF-8");
-                    }
-                }
-                String sql = "INSERT INTO users (full_name, email, PASSWORD_HASH) VALUES (?, ?, ?)";
-                String[] generatedId = {"ID"};
-                PreparedStatement ps = conn.prepareStatement(sql, generatedId);
-                ps.setString(1, name);
-                ps.setString(2, email);
-                ps.setString(3, pass);
-                ps.executeUpdate();
-                ResultSet rs = ps.getGeneratedKeys();
-                if (rs.next()) response = String.valueOf(rs.getInt(1));
-            } catch (Exception e) { e.printStackTrace(); }
-            byte[] bs = response.getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, bs.length);
-            exchange.getResponseBody().write(bs);
-            exchange.getResponseBody().close();
-        });
+       // --- 2. REGISTER ---
+server.createContext("/register", (exchange) -> {
+    exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+    String q = exchange.getRequestURI().getQuery();
+    String response = "0";
+    try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass)) {
+        String name = "", email = "", pass = "";
+        for (String pair : q.split("&")) {
+            String[] kv = pair.split("=");
+            if (kv.length > 1) {
+                if (kv[0].equals("name"))  name  = URLDecoder.decode(kv[1], "UTF-8");
+                if (kv[0].equals("email")) email = URLDecoder.decode(kv[1], "UTF-8");
+                if (kv[0].equals("pass"))  pass  = URLDecoder.decode(kv[1], "UTF-8");
+            }
+        }
+        CallableStatement cs = conn.prepareCall("{call cinematheque_pkg.register_user(?, ?, ?, ?)}");
+        cs.setString(1, name);
+        cs.setString(2, email);
+        cs.setString(3, pass);
+        cs.registerOutParameter(4, Types.NUMERIC);
+        cs.execute();
+        response = String.valueOf(cs.getInt(4));
+    } catch (SQLException e) {
+        if (e.getErrorCode() == 20030) {
+            response = "EMAIL_EXISTENT";
+        } else {
+            e.printStackTrace();
+        }
+    } catch (Exception e) { e.printStackTrace(); }
+    byte[] bs = response.getBytes(StandardCharsets.UTF_8);
+    exchange.sendResponseHeaders(200, bs.length);
+    exchange.getResponseBody().write(bs);
+    exchange.getResponseBody().close();
+});
 
         // --- 3. PROFIL (REPARAT) ---
         server.createContext("/profil", (exchange) -> {
@@ -315,27 +321,33 @@ server.createContext("/get-history", (exchange) -> {
     exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
     String q = exchange.getRequestURI().getQuery();
     String response = "OK";
+    
     try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass)) {
-        String uId = q.split("user=")[1].split("&")[0];
-        String mId = q.split("movie=")[1].split("&")[0];
-        String txt = URLDecoder.decode(q.split("text=")[1].split("&")[0], "UTF-8");
+        // Extragere sigură a parametrilor
+        String uId = "", mId = "", txt = "";
+        for (String pair : q.split("&")) {
+            String[] kv = pair.split("=");
+            if (kv.length > 1) {
+                if (kv[0].equals("user")) uId = kv[1];
+                if (kv[0].equals("movie")) mId = kv[1];
+                if (kv[0].equals("text")) txt = URLDecoder.decode(kv[1], "UTF-8");
+            }
+        }
         
         PreparedStatement ps = conn.prepareStatement("INSERT INTO movie_comments (id_user, id_movie, comment_text) VALUES (?, ?, ?)");
         ps.setInt(1, Integer.parseInt(uId));
         ps.setInt(2, Integer.parseInt(mId));
         ps.setString(3, txt);
         ps.executeUpdate();
-    } catch (SQLException e) {
-        // CERINȚĂ: PRINDERE EXCEPȚIE DIN PL/SQL (Trigger-ul de spam)
-        if (e.getErrorCode() == 20001) {
-            response = "Eroare PL/SQL: Ai postat prea multe comentarii!";
-        } else {
-            response = "Eroare baza de date: " + e.getMessage();
-        }
-    } catch (Exception e) { response = "Eroare Server"; }
+        
+    } catch (Exception e) { 
+        e.printStackTrace(); 
+        response = "Eroare: " + e.getMessage(); 
+    }
     
-    exchange.sendResponseHeaders(200, response.length());
-    exchange.getResponseBody().write(response.getBytes());
+    byte[] bs = response.getBytes(StandardCharsets.UTF_8);
+    exchange.sendResponseHeaders(200, bs.length);
+    exchange.getResponseBody().write(bs);
     exchange.getResponseBody().close();
 });
       // --- 5. ADĂUGARE/ȘTERGERE DIN WATCHLIST (TOGGLE) ---
@@ -402,43 +414,137 @@ server.createContext("/get-history", (exchange) -> {
             exchange.getResponseBody().close();
         });
         // --- 10. ADAUGARE FILM (ADMIN ONLY) ---
-        server.createContext("/add-movie", (exchange) -> {
+       server.createContext("/add-movie", (exchange) -> {
             exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
             String q = exchange.getRequestURI().getQuery();
             String response = "Eroare";
-            
+
             try (Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass)) {
-                // Extragem datele din URL
+                // 1. Definim variabilele pentru TOATE datele așteptate din URL
                 String titlu = "", desc = "", an = "", poster = "", trailer = "", cat = "1";
-                
-                for (String pair : q.split("&")) {
-                    String[] kv = pair.split("=");
-                    if (kv.length > 1) {
-                        String val = URLDecoder.decode(kv[1], "UTF-8");
-                        if (kv[0].equals("titlu")) titlu = val;
-                        if (kv[0].equals("desc")) desc = val;
-                        if (kv[0].equals("an")) an = val;
-                        if (kv[0].equals("poster")) poster = val;
-                        if (kv[0].equals("trailer")) trailer = val;
-                        if (kv[0].equals("cat")) cat = val;
+                String dirFname = "", dirLname = "", dirPhoto = "";
+                String actFname = "", actLname = "", actPhoto = "";
+
+                // 2. Extragem datele din URL
+                if (q != null) {
+                    for (String pair : q.split("&")) {
+                        String[] kv = pair.split("=");
+                        if (kv.length > 1) {
+                            String val = URLDecoder.decode(kv[1], "UTF-8");
+                            if (kv[0].equals("titlu")) titlu = val;
+                            if (kv[0].equals("desc")) desc = val;
+                            if (kv[0].equals("an")) an = val;
+                            if (kv[0].equals("poster")) poster = val;
+                            if (kv[0].equals("trailer")) trailer = val;
+                            if (kv[0].equals("cat")) cat = val;
+                            if (kv[0].equals("dirFname")) dirFname = val;
+                            if (kv[0].equals("dirLname")) dirLname = val;
+                            if (kv[0].equals("dirPhoto")) dirPhoto = val;
+                            if (kv[0].equals("actFname")) actFname = val;
+                            if (kv[0].equals("actLname")) actLname = val;
+                            if (kv[0].equals("actPhoto")) actPhoto = val;
+                        }
                     }
                 }
 
-                String sql = "INSERT INTO movies (title, description, release_year, poster_url, trailer_url, id_category) VALUES (?, ?, ?, ?, ?, ?)";
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ps.setString(1, titlu);
-                ps.setString(2, desc);
-                ps.setInt(3, Integer.parseInt(an));
-                ps.setString(4, poster);
-                ps.setString(5, trailer);
-                ps.setInt(6, Integer.parseInt(cat));
-                
-                ps.executeUpdate();
-                response = "Succes";
-            } catch (Exception e) { e.printStackTrace(); }
-            
+                // --- Pentru siguranță (să nu inserezi parțial dacă ceva crapă), dezactivăm auto-commit
+                conn.setAutoCommit(false);
+
+                try {
+                    // ==========================================
+                    // PASUL A: INSERARE FILM
+                    // ==========================================
+                    int nextMovieId = 1;
+                    try (PreparedStatement idStmt = conn.prepareStatement("SELECT NVL(MAX(id), 0) + 1 AS next_id FROM movies");
+                         ResultSet rs = idStmt.executeQuery()) {
+                        if (rs.next()) nextMovieId = rs.getInt("next_id");
+                    }
+
+                    String sqlMovie = "INSERT INTO movies (id, title, description, release_year, poster_url, trailer_url, id_category) VALUES (?, ?, ?, ?, ?, ?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlMovie)) {
+                        ps.setInt(1, nextMovieId);
+                        ps.setString(2, titlu);
+                        ps.setString(3, desc);
+                        ps.setInt(4, Integer.parseInt(an));
+                        ps.setString(5, poster);
+                        ps.setString(6, trailer);
+                        ps.setInt(7, Integer.parseInt(cat));
+                        ps.executeUpdate();
+                    }
+
+                    // ==========================================
+                    // PASUL B: INSERARE REGIZOR
+                    // ==========================================
+                    int nextDirId = 1;
+                    try (PreparedStatement idStmt = conn.prepareStatement("SELECT NVL(MAX(id), 0) + 1 AS next_id FROM directors");
+                         ResultSet rs = idStmt.executeQuery()) {
+                        if (rs.next()) nextDirId = rs.getInt("next_id");
+                    }
+
+                    String sqlDir = "INSERT INTO directors (id, first_name, last_name, photo_url) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlDir)) {
+                        ps.setInt(1, nextDirId);
+                        ps.setString(2, dirFname);
+                        ps.setString(3, dirLname);
+                        ps.setString(4, dirPhoto);
+                        ps.executeUpdate();
+                    }
+
+                    // Legătură Film - Regizor
+                    String sqlMovieDir = "INSERT INTO movie_directors (id_movie, id_director) VALUES (?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlMovieDir)) {
+                        ps.setInt(1, nextMovieId);
+                        ps.setInt(2, nextDirId);
+                        ps.executeUpdate();
+                    }
+
+                    // ==========================================
+                    // PASUL C: INSERARE ACTOR
+                    // ==========================================
+                    int nextActId = 1;
+                    try (PreparedStatement idStmt = conn.prepareStatement("SELECT NVL(MAX(id), 0) + 1 AS next_id FROM actors");
+                         ResultSet rs = idStmt.executeQuery()) {
+                        if (rs.next()) nextActId = rs.getInt("next_id");
+                    }
+
+                    String sqlAct = "INSERT INTO actors (id, first_name, last_name, photo_url) VALUES (?, ?, ?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlAct)) {
+                        ps.setInt(1, nextActId);
+                        ps.setString(2, actFname);
+                        ps.setString(3, actLname);
+                        ps.setString(4, actPhoto);
+                        ps.executeUpdate();
+                    }
+
+                    // Legătură Film - Actor
+                    String sqlMovieAct = "INSERT INTO movie_actors (id_movie, id_actor, role_name) VALUES (?, ?, ?)";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlMovieAct)) {
+                        ps.setInt(1, nextMovieId);
+                        ps.setInt(2, nextActId);
+                        ps.setString(3, "Rol Principal"); // Putem pune ceva generic aici
+                        ps.executeUpdate();
+                    }
+
+                    // Dacă totul a mers bine, salvăm modificările
+                    conn.commit();
+                    response = "Succes";
+
+                } catch (Exception innerEx) {
+                    // Dacă ceva a crăpat, anulăm toate modificările (rollback)
+                    conn.rollback();
+                    innerEx.printStackTrace();
+                    response = "Eroare la inserarea datelor.";
+                } finally {
+                    // Reactivăm auto-commit
+                    conn.setAutoCommit(true);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             byte[] bs = response.getBytes(StandardCharsets.UTF_8);
-            exchange.sendResponseHeaders(200, bs.length);
+            exchange.sendResponseHeaders(200, bs.length);   
             exchange.getResponseBody().write(bs);
             exchange.getResponseBody().close();
         });

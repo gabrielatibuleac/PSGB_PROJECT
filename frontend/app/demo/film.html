@@ -343,20 +343,30 @@
         loadComments();
 
         const btnSubmit = document.getElementById('btn-submit-comment');
-        if(btnSubmit) {
-            btnSubmit.onclick = () => {
-                const text = document.getElementById('comment-text').value;
-                const rating = document.getElementById('rating-val') ? document.getElementById('rating-val').value : 10;
-                
-                if(!text.trim()) return;
-                
-                fetch(`http://localhost:8081/add-comment?user=${userId}&movie=${movieId}&text=${encodeURIComponent(text)}&rating=${rating}`)
-                    .then(() => { 
-                        document.getElementById('comment-text').value = ""; 
-                        loadComments(); 
-                    });
-            };
+if(btnSubmit) {
+    btnSubmit.onclick = () => {
+        const textInput = document.getElementById('comment-text');
+        const text = textInput.value;
+        
+        if(!text.trim()) {
+            alert("Scrie un comentariu mai întâi!");
+            return;
         }
+        
+        // Trimitem cererea către server
+        fetch(`http://localhost:8081/add-comment?user=${userId}&movie=${movieId}&text=${encodeURIComponent(text)}`)
+            .then(res => res.text())
+            .then(msg => {
+                if(msg === "OK") {
+                    textInput.value = ""; // Curățăm căsuța
+                    loadComments(); // REÎNCĂRCĂM LISTA imediat
+                } else {
+                    alert("Eroare la salvare: " + msg);
+                }
+            })
+            .catch(err => console.error("Eroare server:", err));
+    };
+}
     });
     </script>
 </body>
